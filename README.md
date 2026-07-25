@@ -17,6 +17,7 @@
 **[🔐 越权漏洞报告](AUTH_REPORT.md)** ·
 **[📂 路径遍历漏洞报告](PATH_TRAVERSAL_REPORT.md)** ·
 **[🛡️ CSRF/XSS漏洞报告](CSRF_XSS_REPORT.md)** ·
+**[🧩 SSTI漏洞报告](SSTI_REPORT.md)** ·
 **[🚀 快速开始](#-快速开始)** ·
 **[📋 修复清单](#-修复的漏洞清单)**
 
@@ -135,6 +136,8 @@ python app.py
 | 21 | **路径遍历读取源码** | 🔴 严重 | 白名单+路径规范化检查 | [CWE-22](https://cwe.mitre.org/data/definitions/22.html) |
 | 22 | **路径遍历读取系统文件** | 🔴 严重 | 前缀检查拒绝越界路径 | [CWE-22](https://cwe.mitre.org/data/definitions/22.html) |
 | 23 | **CSRF 修改密码** | 🔴 严重 | CSRF Token + 原密码验证 | [CWE-352](https://cwe.mitre.org/data/definitions/352.html) |
+| **24** | **SSTI 欢迎页** | 🔴 严重 | 变量传递替代字符串拼接 | [CWE-1336](https://cwe.mitre.org/data/definitions/1336.html) |
+| **25** | **SSTI 反馈页** | 🔴 严重 | 变量传递替代字符串拼接 | [CWE-1336](https://cwe.mitre.org/data/definitions/1336.html) |
 
 📖 **每个漏洞的详细分析见 [VULN_REPORT.md](VULN_REPORT.md)。**
 
@@ -157,6 +160,9 @@ python app.py
 | POST | `/recharge` | 充值 | **是** | 否 |
 | GET | `/page` | 动态页面（帮助中心） | 否 | 否 |
 | POST | `/change-password` | 修改密码 | **是** | 否 |
+| GET | `/welcome` | 个性化欢迎页 | 否 | 否 |
+| GET | `/feedback` | 显示反馈表单 | 否 | 否 |
+| POST | `/feedback` | 提交反馈 | 否 | 否 |
 
 ---
 
@@ -190,6 +196,7 @@ Classrepair/
 ├── app.py                    # Flask 应用主文件（加固版）
 ├── requirements.txt          # Python 依赖清单
 ├── CSRF_XSS_REPORT.md        # CSRF与XSS漏洞检测与修复报告
+├── SSTI_REPORT.md            # SSTI漏洞检测与修复报告
 ├── PATH_TRAVERSAL_REPORT.md  # 路径遍历漏洞检测与修复报告
 ├── AUTH_REPORT.md            # 越权漏洞检测与修复报告
 ├── VULN_REPORT.md            # 漏洞分析报告（完整版）

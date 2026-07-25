@@ -56,6 +56,8 @@
 | **21** | **路径遍历读取源码** | 🔴 严重 | [CWE-22](https://cwe.mitre.org/data/definitions/22.html) | 未校验 name 参数，直接拼接路径 | 白名单+路径规范化 |
 | **22** | **路径遍历读取系统文件** | 🔴 严重 | [CWE-22](https://cwe.mitre.org/data/definitions/22.html) | 无 ../ 过滤，可读取任意文件 | 前缀检查拒绝越界路径 |
 | **23** | **CSRF 修改密码** | 🔴 严重 | [CWE-352](https://cwe.mitre.org/data/definitions/352.html) | 无 CSRF Token、无原密码校验 | CSRF Token + 原密码验证 + session身份 |
+| **24** | **SSTI 欢迎页** | 🔴 严重 | [CWE-1336](https://cwe.mitre.org/data/definitions/1336.html) | 拼接用户输入到模板字符串 | 变量传递方式渲染 |
+| **25** | **SSTI 反馈页** | 🔴 严重 | [CWE-1336](https://cwe.mitre.org/data/definitions/1336.html) | 拼接用户输入到模板字符串 | 变量传递方式渲染 |
 
 ---
 

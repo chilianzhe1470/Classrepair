@@ -26,6 +26,8 @@
  18. 越权充值 → 从 session 获取用户，禁止表单指定他人，校验金额正负
  19. 文件包含/路径遍历 → 白名单校验 + 路径规范化检查
  20. CSRF 修改密码 → CSRF Token + 原密码校验 + session身份验证
+ 21. SSTI（欢迎页） → 变量传递方式，不拼接用户输入
+ 22. SSTI（反馈页） → 变量传递方式，不拼接用户输入
 """
 
 import logging
@@ -37,7 +39,7 @@ import uuid
 from datetime import timedelta
 from typing import Dict, List, Optional, Set, Tuple
 
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import Flask, redirect, render_template, render_template_string, request, session, url_for
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_wtf.csrf import CSRFProtect
@@ -540,6 +542,109 @@ def _register_routes(app: Flask, limiter: Limiter) -> None:
             return render_template("index.html", page_content=content)
 
         return render_template("index.html", page_content="页面不存在")
+
+    # ------------------------------------------------------------------
+    # 路由：欢迎页（变量传递方式，防止 SSTI）
+    # ------------------------------------------------------------------
+    @app.route("/welcome")
+    def welcome():
+        """个性化欢迎页面。
+
+        安全措施：使用 render_template_string 但通过变量传递参数，
+        不将用户输入拼接到模板字符串中，防止 SSTI 攻击。
+
+        Returns:
+            渲染的 HTML 页面。
+        """
+        name: str = request.args.get("name", "亲爱的用户")
+
+        # 安全：通过变量传递，不拼接用户输入
+        return render_template_string(
+            """<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>欢迎页</title>
+<link rel="stylesheet" href="/static/css/style.css"></head>
+<body>
+<nav class="navbar"><div class="nav-brand">用户管理系统</div>
+<div class="nav-menu">
+    <a href="{{ url_for('index') }}" class="nav-link">首页</a>
+    <a href="{{ url_for('welcome') }}" class="nav-link">欢迎页</a>
+    <a href="{{ url_for('feedback') }}" class="nav-link">反馈</a>
+</div></nav>
+<main class="container"><div class="card">
+<h1>欢迎你，{{ name }}！</h1>
+<p><a href="{{ url_for('index') }}">← 返回首页</a></p>
+</div></main>
+</body>
+</html>""",
+            name=name,
+        )
+
+    # ------------------------------------------------------------------
+    # 路由：反馈（变量传递方式，防止 SSTI）
+    # ------------------------------------------------------------------
+    @app.route("/feedback", methods=["GET", "POST"])
+    def feedback():
+        """用户反馈功能。
+
+        安全措施：使用 render_template_string 但通过变量传递参数，
+        不将用户输入拼接到模板字符串中，防止 SSTI 攻击。
+
+        Returns:
+            反馈表单或反馈结果的渲染 HTML 页面。
+        """
+        if request.method == "POST":
+            name: str = request.form.get("name", "")
+            message: str = request.form.get("message", "")
+
+            return render_template_string(
+                """<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>反馈结果</title>
+<link rel="stylesheet" href="/static/css/style.css"></head>
+<body>
+<nav class="navbar"><div class="nav-brand">用户管理系统</div>
+<div class="nav-menu">
+    <a href="{{ url_for('index') }}" class="nav-link">首页</a>
+    <a href="{{ url_for('welcome') }}" class="nav-link">欢迎页</a>
+    <a href="{{ url_for('feedback') }}" class="nav-link">反馈</a>
+</div></nav>
+<main class="container"><div class="card">
+<h2>{{ name }} 的反馈：</h2>
+<p>{{ message }}</p>
+<p><a href="{{ url_for('index') }}">← 返回首页</a></p>
+</div></main>
+</body>
+</html>""",
+                name=name,
+                message=message,
+            )
+
+        return render_template_string(
+            """<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>用户反馈</title>
+<link rel="stylesheet" href="/static/css/style.css"></head>
+<body>
+<nav class="navbar"><div class="nav-brand">用户管理系统</div>
+<div class="nav-menu">
+    <a href="{{ url_for('index') }}" class="nav-link">首页</a>
+    <a href="{{ url_for('welcome') }}" class="nav-link">欢迎页</a>
+    <a href="{{ url_for('feedback') }}" class="nav-link">反馈</a>
+</div></nav>
+<main class="container"><div class="card">
+<h2>用户反馈</h2>
+<form method="POST" action="{{ url_for('feedback') }}">
+<div class="form-group"><label>姓名</label>
+<input type="text" name="name" class="form-input" placeholder="请输入姓名" required></div>
+<div class="form-group"><label>留言</label>
+<textarea name="message" class="form-input" placeholder="请输入留言内容" rows="4" required></textarea></div>
+<button type="submit" class="btn btn-primary">提交反馈</button>
+</form>
+</div></main>
+</body>
+</html>"""
+        )
 
     # ------------------------------------------------------------------
     # 路由：修改密码（需 CSRF Token + 原密码 + session 校验）
