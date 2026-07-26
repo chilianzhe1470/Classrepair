@@ -7,8 +7,6 @@
 [![License](https://img.shields.io/badge/许可证-MIT-green.svg)](LICENSE)
 [![Security](https://img.shields.io/badge/安全-已加固-brightgreen)](#-修复的漏洞清单)
 
-**一个用于网络安全教学的 Flask 应用 —— 从漏洞版到加固版的对比实践。**
-
 将原始漏洞版 [Class01](http://192.168.145.130:5000/) 与加固版进行对比，理解真实的 Web 安全漏洞及其修复方法。
 
 **[🔬 漏洞分析报告](VULN_REPORT.md)** ·
@@ -43,7 +41,7 @@
 
 ## ✨ 项目概述
 
-本项目在简单的 Flask 用户管理应用中演示 **13 种常见 Web 安全漏洞**（基于 OWASP Top 10），并逐一给出对应修复方案。适用于**网络安全实训课程** —— 教师可部署漏洞版用于渗透测试练习，加固版作为参考答案。
+本项目在简单的 Flask 用户管理应用中演示 **13 种常见 Web 安全漏洞**（基于 OWASP Top 10），并逐一给出对应修复方案。
 
 | 对比项 | 原始漏洞版 (Class01) | 本仓库 (加固版) |
 |--------|-------------------|-----------------|
@@ -61,7 +59,6 @@
 
 - Python **3.8+**
 - `pip`（Python 包管理器）
-- *（可选）* `virtualenv` 创建隔离环境
 
 ### 安装步骤
 
@@ -279,7 +276,7 @@ curl -s -I http://localhost:8080/ | grep -E '^(X-|Strict-|Cache-)'
 
 <div align="center">
 
-**用于网络安全教学** · 基于 [Flask](https://flask.palletsprojects.com/) 构建
+基于 [Flask](https://flask.palletsprojects.com/) 构建
 
 *本项目仅供合法教学使用。作者不对滥用其中技术的行为承担责任。*
 
