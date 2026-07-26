@@ -28,12 +28,15 @@
  20. CSRF 修改密码 → CSRF Token + 原密码校验 + session身份验证
  21. SSTI（欢迎页） → 变量传递方式，不拼接用户输入
  22. SSTI（反馈页） → 变量传递方式，不拼接用户输入
+ 23. 命令注入（Ping） → 参数列表方式 + shell=False
 """
 
 import logging
 import os
+import platform
 import secrets
 import sqlite3
+import subprocess
 import sys
 import uuid
 from datetime import timedelta
@@ -645,6 +648,47 @@ def _register_routes(app: Flask, limiter: Limiter) -> None:
 </body>
 </html>"""
         )
+
+    # ------------------------------------------------------------------
+    # 路由：Ping 诊断（参数列表方式，防止命令注入）
+    # ------------------------------------------------------------------
+    @app.route("/ping", methods=["GET", "POST"])
+    def ping():
+        """Ping 网络诊断工具。
+
+        安全措施：
+        - 使用参数列表方式传递命令（不启用 shell）
+        - shell=False 确保用户输入不被当作 shell 命令解析
+        - 设置 30 秒超时防止 DoS
+
+        Returns:
+            Ping 测试页面的渲染 HTML 模板。
+        """
+        if "username" not in session:
+            return redirect(url_for("login"))
+
+        result: Optional[str] = None
+        error: Optional[str] = None
+
+        if request.method == "POST":
+            ip: str = request.form.get("ip", "")
+
+            # 安全：参数列表方式 + shell=False
+            try:
+                output = subprocess.check_output(
+                    ["ping", "-c", "3", ip],
+                    timeout=30,
+                    stderr=subprocess.STDOUT,
+                )
+                result = output.decode("utf-8", errors="replace")
+            except subprocess.CalledProcessError as e:
+                error = e.output.decode("utf-8", errors="replace") if e.output else "命令执行失败"
+            except subprocess.TimeoutExpired:
+                error = "命令执行超时（30秒）"
+            except Exception as e:
+                error = str(e)
+
+        return render_template("ping.html", result=result, error=error)
 
     # ------------------------------------------------------------------
     # 路由：修改密码（需 CSRF Token + 原密码 + session 校验）

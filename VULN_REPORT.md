@@ -58,6 +58,7 @@
 | **23** | **CSRF 修改密码** | 🔴 严重 | [CWE-352](https://cwe.mitre.org/data/definitions/352.html) | 无 CSRF Token、无原密码校验 | CSRF Token + 原密码验证 + session身份 |
 | **24** | **SSTI 欢迎页** | 🔴 严重 | [CWE-1336](https://cwe.mitre.org/data/definitions/1336.html) | 拼接用户输入到模板字符串 | 变量传递方式渲染 |
 | **25** | **SSTI 反馈页** | 🔴 严重 | [CWE-1336](https://cwe.mitre.org/data/definitions/1336.html) | 拼接用户输入到模板字符串 | 变量传递方式渲染 |
+| **26** | **命令注入 Ping** | 🔴 严重 | [CWE-78](https://cwe.mitre.org/data/definitions/78.html) | shell=True + f-string 拼接命令 | 参数列表方式 + shell=False |
 
 ---
 

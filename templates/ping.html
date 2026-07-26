@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Ping 测试{% endblock %}
+{% block content %}
+<div class="card">
+    <h2 class="card-title">Ping 网络诊断</h2>
+    <p class="card-subtitle">输入 IP 地址或域名进行网络连通性测试</p>
+
+    <form method="POST" action="{{ url_for('ping') }}" class="login-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+            <label for="ip" class="form-label">IP 地址 / 域名</label>
+            <input type="text" id="ip" name="ip" class="form-input" placeholder="例如：127.0.0.1">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Ping</button>
+    </form>
+
+    {% if result %}
+        <div class="ping-result">
+            <h3>执行结果：</h3>
+            <pre class="console-output">{{ result }}</pre>
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <div class="ping-result">
+            <h3>错误信息：</h3>
+            <pre class="console-output error-console">{{ error }}</pre>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.console-output {
+    background: #1a1a2e;
+    color: #00ff88;
+    padding: 16px;
+    border-radius: 6px;
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #333;
+}
+.error-console {
+    color: #ff6b6b;
+}
+.ping-result h3 {
+    font-size: 14px;
+    color: #555;
+    margin: 16px 0 8px;
+}
+</style>
+{% endblock %}

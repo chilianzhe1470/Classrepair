@@ -18,6 +18,7 @@
 **[📂 路径遍历漏洞报告](PATH_TRAVERSAL_REPORT.md)** ·
 **[🛡️ CSRF/XSS漏洞报告](CSRF_XSS_REPORT.md)** ·
 **[🧩 SSTI漏洞报告](SSTI_REPORT.md)** ·
+**[💻 命令注入漏洞报告](CMD_INJECTION_REPORT.md)** ·
 **[🚀 快速开始](#-快速开始)** ·
 **[📋 修复清单](#-修复的漏洞清单)**
 
@@ -138,6 +139,7 @@ python app.py
 | 23 | **CSRF 修改密码** | 🔴 严重 | CSRF Token + 原密码验证 | [CWE-352](https://cwe.mitre.org/data/definitions/352.html) |
 | **24** | **SSTI 欢迎页** | 🔴 严重 | 变量传递替代字符串拼接 | [CWE-1336](https://cwe.mitre.org/data/definitions/1336.html) |
 | **25** | **SSTI 反馈页** | 🔴 严重 | 变量传递替代字符串拼接 | [CWE-1336](https://cwe.mitre.org/data/definitions/1336.html) |
+| **26** | **命令注入 Ping** | 🔴 严重 | 参数列表 + shell=False | [CWE-78](https://cwe.mitre.org/data/definitions/78.html) |
 
 📖 **每个漏洞的详细分析见 [VULN_REPORT.md](VULN_REPORT.md)。**
 
@@ -163,6 +165,8 @@ python app.py
 | GET | `/welcome` | 个性化欢迎页 | 否 | 否 |
 | GET | `/feedback` | 显示反馈表单 | 否 | 否 |
 | POST | `/feedback` | 提交反馈 | 否 | 否 |
+| GET | `/ping` | 显示 Ping 测试页面 | **是** | 否 |
+| POST | `/ping` | 执行 Ping 命令 | **是** | 否 |
 
 ---
 
@@ -196,6 +200,7 @@ Classrepair/
 ├── app.py                    # Flask 应用主文件（加固版）
 ├── requirements.txt          # Python 依赖清单
 ├── CSRF_XSS_REPORT.md        # CSRF与XSS漏洞检测与修复报告
+├── CMD_INJECTION_REPORT.md   # 命令注入漏洞检测与修复报告
 ├── SSTI_REPORT.md            # SSTI漏洞检测与修复报告
 ├── PATH_TRAVERSAL_REPORT.md  # 路径遍历漏洞检测与修复报告
 ├── AUTH_REPORT.md            # 越权漏洞检测与修复报告
